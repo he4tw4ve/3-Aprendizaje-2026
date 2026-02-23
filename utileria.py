@@ -37,27 +37,25 @@ def descomprime_zip(archivo, directorio='datos'):
         zip_ref.extractall(directorio)
     return None
 
+# cambie la funcion esta porque no me funcionaba para el dataset de los vinos
+# trate de no cambiar mucho de este archivo
 def lee_csv(archivo, atributos=None, separador=','):
-    """
-    Lee un archivo CSV y regresa una lista de diccionarios.
-    Se asume que la primera linea contiene el nombre de los atributos.
-    
-    Parámetros
-    ----------
-    archivo : str
-        Nombre del archivo CSV.
-    atributos : list(str)
-        Lista de atributos a considerar. Si es None, se asume que la primera linea contiene los nombres de los atributos.
-    separador : str
-        Separador de columnas.
-    """
-    with open(archivo, 'r') as f:
+    with open(archivo, 'r', encoding='utf-8') as f:
         lineas = f.readlines()
+        
     if atributos is None:   
-        columnas = lineas[0].strip().split(separador)
+        columnas = [
+            c.strip().replace('"', '') 
+            for c in lineas[0].strip().split(separador)
+        ]
     else:
         columnas = atributos
+        
     datos = []
     for l in lineas[1:]:
-        datos.append({c: v for c, v in zip(columnas, l.strip().split(','))})
+        valores = l.strip().split(separador)
+        datos.append({
+            c: v for c, v in zip(columnas, valores)
+        })
+        
     return datos
